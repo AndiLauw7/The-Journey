@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
-import { Container, Stack, Card, Row, Button,ButtonGroup } from "react-bootstrap";
+import { Container, Stack, Card, Row, Button,ButtonGroup,Form } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link, useParams } from "react-router-dom";
 import NavbarUser from "../navbars/NavbarUser";
 import { UserContext } from "../../context/userContext";
@@ -20,17 +21,17 @@ function Profile() {
 	const { id } =  useParams()
 	
 
-	const getUser = async () => {
+	const getProfile = async () => {
 
 		const response = await API.get(`/profile/${id}`)
-		console.log(response.data.data);
+		console.log(response.data.data.dataProfile);
 		setAvatar(response.data.data.dataProfile.image)
 		setUser(response.data.data.dataProfile)
 
 	}
 	
 	useEffect(() => {
-		getUser() 
+		getProfile() 
 	}, [])
 
 	const navigate = useNavigate()
@@ -60,17 +61,17 @@ function Profile() {
           if (form.image) {
             formData.set("image", form?.image[0], form?.image[0]?.name);
           }
-          formData.set("name", form.name);
+          formData.set("fullname", form.fullname);
           formData.set("email", form.email);
           formData.set("phone", form.phone);
           formData.set("address", form.address);
       
           const response = await API.patch(
-            "/profile/" + state.data.id,
+            "/profile/" + user.id,
             formData,
             config
           );
-          console.log(response.data);
+          console.log(user.id);
       
           setEdit(false);
         } catch (error) {
@@ -94,7 +95,7 @@ function Profile() {
       
       const handleEdit = (id) => {
         setEdit(!edit)
-        navigate("/Profile/" + state.data.id);
+        navigate("/Profile/" + user.id);
     };
 
 	return (
@@ -105,45 +106,82 @@ function Profile() {
 					<dt>My Profile</dt>
 				</h1>
 				<Stack className="justify-content-center align-items-center">
-				{edit ? <img src={Close} alt="" onClick={handleEdit} style={{width: "20px", marginLeft: "180px"}}/> : <img src={Edit} alt="" onClick={handleEdit} style={{width: "20px", marginLeft: "180px"}}/>}
+				{edit ? <img src={Close} alt="" onClick={handleEdit} style={{width: "20px", marginLeft: "10px"}}/> : <img src={Edit} alt="" onClick={handleEdit} style={{width: "20px", marginLeft: "180px"}}/>}
 				{edit ? (
-                    <form onSubmit={handleSubmit} className='mt-5'>
-                      <img src={state.data.image} alt="" className="ms-5"/>
-                        <div className='mb-4'>
-                            <input placeholder='Name' name='name' onChange={handleChange}/>
-                        </div>
-                        <div className='mb-4'>
-                            <input placeholder='Email' name='email' onChange={handleChange} />
-                        </div>
-                        <div className='mb-4'>
-                            <input type='file' name='image' onChange={handleChange} />
-                        </div>
-                        <div className='mb-4'>
-                            <button>submit edit</button>
-                        </div>
-                    </form>
+                    // <form onSubmit={handleSubmit} className='mt-5'>
+                    //   <img src={user.image} style={{width: "125px", height:"125px"}} alt="" className="ms-5"/>
+                    //     <div className='mb-4'>
+                    //         <input placeholder='Name' name='fullname' onChange={handleChange}/>
+                    //     </div>
+                    //     <div className='mb-4'>
+                    //         <input placeholder='Email' name='email' onChange={handleChange} />
+                    //     </div>
+					// 	<div className='mb-4'>
+                    //         <input placeholder='phone' name='phone' onChange={handleChange} />
+                    //     </div>
+					// 	<div className='mb-4'>
+                    //         <input placeholder='address' name='address' onChange={handleChange} />
+                    //     </div>
+                    //     <div className='mb-4'>
+                    //         <input type='file' name='image' onChange={handleChange} />
+                    //     </div>
+                    //     <div className='mb-4'>
+                    //         <button>submit edit</button>
+                    //     </div>
+                    // </form>
+					<Form onSubmit={handleSubmit} >
+						<div  className="text-center mt-3 mb-2">
+						<img src={user.image} style={{width: "150px", height:"150px" , borderRadius:"8px"}} alt=""/>
+						</div>
+					  <Form.Group className="mb-3" controlId="formBasicEmail">
+					  
+					    <Form.Control type="text" placeholder="Fullname" name='fullname' onChange={handleChange} />
+					  </Form.Group>
+
+					  <Form.Group className="mb-3" controlId="formBasicEmail">
+					 
+					    <Form.Control type="email" placeholder="Email" name='email' onChange={handleChange} />
+					  </Form.Group>
+
+					  <Form.Group className="mb-3" controlId="formBasicEmail">
+				
+					    <Form.Control type="text" placeholder="Phone" name='phone' onChange={handleChange} />
+					  </Form.Group>
+
+					  <Form.Group className="mb-3" controlId="formBasicEmail">
+
+					    <Form.Control type="text" placeholder="Address" name='address' onChange={handleChange} />
+					  </Form.Group>
+					  <div className="mb-3">
+					  <input className="form-control" type="file"  name='image' onChange={handleChange} />
+					</div>
+					  <Button variant="primary" type="submit">
+					    Submit
+					  </Button>
+					</Form>
                 ) : (
 					<>
 
 						<img
 						// src={user.image}
-						src={preview?(preview) : (path + state.user.image)}
+						src={preview?(preview) : (user.image)}
 						alt="avatar"
-						className="rounded-circle border border-3 border-primary mb-3"
+						className="rounded-circle border border-1 border-primary mb-3"
 						style={{
-							width: "12rem",
-							height: "12rem",
-							objectFit: "cover",
+							width: "150px",
+							height: "150px",
+							
 						}}
 					/>
 					<h4>
-						<dt>{user.fullname}</dt>
+						{/* <p>{user.id}</p> */}
+						<dt>Fullname : {user.fullname}</dt>
 					</h4>
-					<p>{user.email}</p>
-					<p>{user.phone}</p>
-					<p>{user.address}</p>
+					<p>Email : {user.email}</p>
+					<p>Phone : {user.phone}</p>
+					<p>Address : {user.address}</p>
 					<ButtonGroup className="mb-2">
-			<Button>Edit Profile</Button>
+			{/* <Button onClick={handleEdit}>Edit Profile</Button> */}
 			  </ButtonGroup>
 					</>	
 				)}
