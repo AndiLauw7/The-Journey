@@ -37,7 +37,7 @@ exports.register = async (req, res) => {
           fullname:newUser.fullname,
           email:newUser.email,
           phone:newUser.phone,
-          addres:newUser.addres,
+          address:newUser.address,
           image:newUser.image
 
 

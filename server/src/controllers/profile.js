@@ -155,7 +155,7 @@ exports.updateProfile = async (req, res) => {
         await profiles.update({fullname:req.body.fullname,
             email:req.body.email,
             phone:req.body.phone,
-            addres:req.body.address,
+            address:req.body.address,
             image:req.file.filename},{
             where: {id},
       })
