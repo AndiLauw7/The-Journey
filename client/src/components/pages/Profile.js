@@ -1,34 +1,101 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Container, Stack, Card } from "react-bootstrap";
+import React, { Fragment, useContext, useEffect, useState } from "react";
+import { Container, Stack, Card, Row, Button,ButtonGroup } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import NavbarUser from "../navbars/NavbarUser";
-import avatarDummy from "../../assets/img/null.png";
 import { UserContext } from "../../context/userContext";
 import { API } from "../../configAPI/api";
-export const path = "http://localhost:4000/uploads/"
+import { useNavigate } from "react-router-dom";
+import Close from "../../assets/img/close.png"
+import Edit from "../../assets/img/edit.png"
+
+export const path = "http://localhost:8000/uploads/"
 
 function Profile() {
 	const [state, dispatch] = useContext(UserContext)
 	const [avatar, setAvatar] = useState(null);
 	const [user, setUser] = useState({})
 	const [bookmark, setBookmark] = useState(false);
-	
+	console.log(user);
 
 	const { id } =  useParams()
 	
 
 	const getUser = async () => {
 
-		const response = await API.get(`/user/${id}`)
-		console.log(response.data.data.dataUser);
-		setAvatar(response.data.data.dataUser.image)
-		setUser(response.data.data.dataUser)
+		const response = await API.get(`/profile/${id}`)
+		console.log(response.data.data);
+		setAvatar(response.data.data.dataProfile.image)
+		setUser(response.data.data.dataProfile)
 
 	}
 	
 	useEffect(() => {
 		getUser() 
 	}, [])
+
+	const navigate = useNavigate()
+    const [edit, setEdit] = useState(false)
+    const [preview, setPreview] = useState(null);
+    const [form, setForm] = useState({
+      fullname: "",
+      email: "",
+	  phone:"",
+	  address:"",
+      image: "",
+    }); 
+
+
+
+    const handleSubmit = async (e) => {
+        try {
+          e.preventDefault();
+      
+          const config = {
+            headers: {
+              "Content-type": "multipart/form-data",
+            },
+          };
+      
+          const formData = new FormData();
+          if (form.image) {
+            formData.set("image", form?.image[0], form?.image[0]?.name);
+          }
+          formData.set("name", form.name);
+          formData.set("email", form.email);
+          formData.set("phone", form.phone);
+          formData.set("address", form.address);
+      
+          const response = await API.patch(
+            "/profile/" + state.data.id,
+            formData,
+            config
+          );
+          console.log(response.data);
+      
+          setEdit(false);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      const handleChange = (e) => {
+        setForm({
+          ...form,
+          [e.target.name]: e.target.type === "file" ? e.target.files : e.target.value,
+        });
+        if (e.target.type === "file") {
+          let url = URL.createObjectURL(e.target.files[0]);
+          setPreview(url);
+        }
+      };
+
+    
+
+      
+      const handleEdit = (id) => {
+        setEdit(!edit)
+        navigate("/Profile/" + state.data.id);
+    };
 
 	return (
 		<>
@@ -38,8 +105,29 @@ function Profile() {
 					<dt>My Profile</dt>
 				</h1>
 				<Stack className="justify-content-center align-items-center">
-					<img
-						src={avatar === null ? avatarDummy : path + avatar}
+				{edit ? <img src={Close} alt="" onClick={handleEdit} style={{width: "20px", marginLeft: "180px"}}/> : <img src={Edit} alt="" onClick={handleEdit} style={{width: "20px", marginLeft: "180px"}}/>}
+				{edit ? (
+                    <form onSubmit={handleSubmit} className='mt-5'>
+                      <img src={state.data.image} alt="" className="ms-5"/>
+                        <div className='mb-4'>
+                            <input placeholder='Name' name='name' onChange={handleChange}/>
+                        </div>
+                        <div className='mb-4'>
+                            <input placeholder='Email' name='email' onChange={handleChange} />
+                        </div>
+                        <div className='mb-4'>
+                            <input type='file' name='image' onChange={handleChange} />
+                        </div>
+                        <div className='mb-4'>
+                            <button>submit edit</button>
+                        </div>
+                    </form>
+                ) : (
+					<>
+
+						<img
+						// src={user.image}
+						src={preview?(preview) : (path + state.user.image)}
 						alt="avatar"
 						className="rounded-circle border border-3 border-primary mb-3"
 						style={{
@@ -52,6 +140,14 @@ function Profile() {
 						<dt>{user.fullname}</dt>
 					</h4>
 					<p>{user.email}</p>
+					<p>{user.phone}</p>
+					<p>{user.address}</p>
+					<ButtonGroup className="mb-2">
+			<Button>Edit Profile</Button>
+			  </ButtonGroup>
+					</>	
+				)}
+					
 				</Stack>
 				<Stack direction="horizontal" className="my-5" gap={5}>
 					<Card style={{ width: "18rem" }} className="shadow">

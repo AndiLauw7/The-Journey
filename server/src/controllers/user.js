@@ -1,4 +1,5 @@
-const user = require("../../models/user")
+const {user} = require("../../models");
+
 
 exports.getUsers = async (req, res) => {
   
@@ -65,6 +66,105 @@ exports.getUser = async (req, res) => {
       
   }
 }
+
+exports.updateUser = async (req, res) => {
+  try {
+
+      const { id } = req.params
+
+      const dataUser = await user.findOne({
+          where : {
+              id
+          },
+          include : {
+              model: profile,
+              as: "profile",
+              attributes : {
+                  exclude : ["createdAt", "updatedAt", "idUser", "id"]
+              }
+          },
+          
+      }) 
+      
+      
+      if(!dataUser)
+      return res.status(404).send({
+          message : "User Not Found"
+      })
+
+      const replaceFile = (filePath)=> {
+          //menggabungkan direktori controller , uploads dan nama file Product
+          
+          filePath = path.join(__dirname, "../../uploads", filePath)
+          fs.unlink( filePath, (err) => console.log(err))
+      }
+
+
+      replaceFile(dataUser.profile.image)
+      
+
+      const dataUpdate = {
+          image : req.file.filename
+      }
+
+      let updateProfileUser = await profile.update(dataUpdate, {
+          where  : {
+              id
+          }, 
+          ...dataUpdate,
+          attributes : {
+              exclude : ["createdAt", "updateAt"]
+          }
+      })
+      updateProfileUser = JSON.parse(JSON.stringify(updateProfileUser))
+
+      updateProfileUser = {
+          ...dataUpdate,
+          image : process.env.FILE_PATH + updateProfileUser.image
+      }
+
+      res.send({
+          status: "success",
+          message : `update user by id: ${id} success` 
+
+      })
+      
+  } catch (error) {
+      console.log(error)
+      res.send({
+          status: 'failed',
+          message: 'Server Error'
+      })
+  }
+}
+
+exports.addUsers = async (req,res) => {
+  try {
+
+      const data = req.body
+      const dataUser = await user.create(data)
+
+      res.send({
+          status:"success",
+          message: "Add User success",
+          data: {
+              dataUser,
+              attributes : {
+                  exclude : ["createdAt", "updateAt"]
+              }
+          },
+          
+      })
+      
+  } catch (error) {
+      console.log(error)
+      res.send({
+          status: 'failed',
+          message: 'Server Error'
+      })
+  }
+}
+
   exports.deleteUser = async (req, res) => {
     try{
   

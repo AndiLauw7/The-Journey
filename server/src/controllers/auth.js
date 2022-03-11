@@ -1,7 +1,8 @@
-const { user } = require('../../models')
+const { user,profiles } = require('../../models')
 const joi = require('joi')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
+
 
 exports.register = async (req, res) => {
     const schema = joi.object({
@@ -9,7 +10,6 @@ exports.register = async (req, res) => {
         password: joi.string().min(8).required(),
         fullname: joi.string().min(3).required(),
         phone:joi.string().min(3).required(),
-        // address:joi.string().min(3).required()
 
     });
     const {error} = schema.validate(req.body)
@@ -23,11 +23,25 @@ exports.register = async (req, res) => {
       const salt = await bcrypt.genSalt(10)
       const hashedPassword = await bcrypt.hash(req.body.password, salt)
       const newUser = await user.create({
+
         fullname : req.body.fullname,
         email: req.body.email,
         phone:req.body.phone,
         password: hashedPassword,
-        role: "customer",
+     
+      })
+      // console.log(newUser.id);
+      const newprofile = await profiles.create({
+
+          iduser:newUser.id,
+          fullname:newUser.fullname,
+          email:newUser.email,
+          phone:newUser.phone,
+          addres:newUser.addres,
+          image:newUser.image
+
+
+
       })
       const token = jwt.sign({id:newUser.id}, process.env.TOKEN_KEY)
       res.status(200).send({
@@ -84,7 +98,6 @@ try{
             email: userLogin.email,
             role: userLogin.role,
             phone: userLogin.phone,
-            address:userLogin.addres,
             token
             }
         }
@@ -126,7 +139,6 @@ exports.checkAuth = async (req, res) => {
           fullname: dataUser.fullname,
           email: dataUser.email,
           phone: dataUser.phone,
-          address:dataUser.address,
           image:dataUser.image,
           role: dataUser.role,
         },

@@ -1,10 +1,11 @@
-const {profile,user} = require ("../../models")
+const {profiles,user} = require ("../../models")
+
 
 
 exports.getProfiles = async (req, res) => {
     try {
 
-        const dataProfiles = await profile.findAll({
+        const dataProfiles = await profiles.findAll({
             
             include : {
                 models: user,
@@ -50,9 +51,9 @@ exports.getProfile = async (req, res) => {
 
         
 
-        let dataProfile = await profile.findOne({
+        let dataProfile = await profiles.findOne({
             where :{
-                id_user : id
+                iduser : id
             },
             attributes : {
                 exclude : ["createdAt", "updatedAt", "idUser"]
@@ -106,32 +107,22 @@ exports.getProfile = async (req, res) => {
 exports.addProfile = async (req, res) => {
 
     try {
-
-
-        
         const data = {
             
             image : req.file.filename
         }
 
-        let dataProfile = await profile.create(data, {
+        let dataProfile = await profiles.create(data, {
             ...data,
             
             attributes: {
                 exclude : ["createAt", "updateAt"]
             }
         }) 
-    
-
         dataProfile = JSON.parse(JSON.stringify(dataProfile))
-
-        dataProfile = {
-            
+        dataProfile = {    
             image : process.env.FILE_PATH + dataProfile.image
         }
-
-        
-
 
         if(dataProfile == "") 
         return res.status(404).send({
@@ -157,3 +148,34 @@ exports.addProfile = async (req, res) => {
     
     
 }
+
+exports.updateProfile = async (req, res) => {
+    try {
+        let { id } = req.params;
+        await profiles.update({fullname:req.body.fullname,
+            email:req.body.email,
+            phone:req.body.phone,
+            addres:req.body.address,
+            image:req.file.filename},{
+            where: {id},
+      })
+      let profil = await profiles.findAll({
+        where:{
+          id
+        },
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "iduser"]
+        }
+      })
+      res.send({
+        status: "success",
+         profil
+      });
+    } catch (error) {
+      console.log(error);
+      res.send({
+        status: "failed",
+        message: "Server Error",
+      });
+    }
+  };

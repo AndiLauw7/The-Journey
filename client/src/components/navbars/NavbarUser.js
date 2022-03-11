@@ -4,7 +4,7 @@ import { Navbar, Container, Stack, Nav, Dropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import logoBlack from "../../assets/img/logoBlack.png";
 import avatarDummy from "../../assets/img/null.png";
-export const path = "http://localhost:4000/uploads/"
+export const path = "http://localhost:8000/uploads/"
 function NavbarUser() {
 	const navigate = useNavigate()
 	const [state, dispatch] = useContext(UserContext)
@@ -14,6 +14,7 @@ function NavbarUser() {
 	// console.log(avatar);
 
 	const id = state.user.id
+	console.log(id);
 
 	const handleLogOut = () => {
 		dispatch({
