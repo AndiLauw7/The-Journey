@@ -3,18 +3,22 @@ import { UserContext } from "../../context/userContext";
 import { Navbar, Container, Stack, Nav, Dropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import logoBlack from "../../assets/img/logoBlack.png";
-import avatarDummy from "../../assets/img/null.png";
+import { API } from "../../configAPI/api";
+
+
+
 export const path = "http://localhost:8000/uploads/"
+
+
+
+
+
 function NavbarUser() {
 	const navigate = useNavigate()
 	const [state, dispatch] = useContext(UserContext)
-	console.log(state.user);
-
-	const [avatar, setAvatar] = useState(null);
-	// console.log(avatar);
+	const [profile, setProfile] = useState([])
 
 	const id = state.user.id
-	console.log(id);
 
 	const handleLogOut = () => {
 		dispatch({
@@ -22,13 +26,16 @@ function NavbarUser() {
 		})
 		navigate("/")
 	}
-	
-	useEffect(() => {
-		console.log(state.user.image);
-		
-		setAvatar(state.user.image)
-	})
+	const getProfile = async ()  => {
+		const response = await API.get(`/profile/${id}`)
+		setProfile(response.data.data.dataProfile)
+		console.log(response);
+	}
 
+	useEffect(() => {
+		getProfile()
+	},[])
+	
 
 	return (
 		<Navbar bg="light" sticky="top" className=" shadow">
@@ -44,9 +51,9 @@ function NavbarUser() {
 						<Dropdown align="end">
 							<Dropdown.Toggle as={Nav.Link} className="Dropdown-Toggle">
 								<img
-									src={avatar === null ? avatarDummy : path + avatar}
-									alt="avatar"
-									className="rounded-circle border border-3 border-primary "
+									src={profile.image}
+									alt=""
+									className="rounded-circle border border-1 border-primary "
 									style={{
 										width: "3rem",
 										height: "3rem",
