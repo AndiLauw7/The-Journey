@@ -5,9 +5,12 @@ import NavbarUser from "../navbars/NavbarUser";
 
 function DetailJourney() {
 	const [isLogin, setIsLogin] = useState(false);
+
+
 	return (
 		<>
-			{isLogin ? <NavbarUser /> : <NavTop />}
+			{isLogin ? <NavbarUser /> : <NavTop /> }
+			
 			<Container className="py-5">
 				<Row className="align-items-center">
 					<Col lg={6}>

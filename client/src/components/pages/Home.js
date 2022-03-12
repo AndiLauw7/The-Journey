@@ -14,6 +14,7 @@ import {
 import NavbarUser from "../navbars/NavbarUser";
 import HomeTitle from "./HomeTitle";
 import ModalLogin from "../Modals/ModalLogin";
+import NavTop from "../navbars/NavTop";
 
 
 
@@ -25,8 +26,8 @@ function Home() {
 	const [state, dispatch] = useContext(UserContext)
 	const [bookmark, setBookmark] = useState(false)
 	const [modalLogin, setModalLogin] = useState(false);
-
-	
+	const [isLogin, setIsLogin] = useState(false);
+	const [detail,setDetail] = useState(false)
 
 
 	const handleBookmark = () => {
@@ -37,6 +38,14 @@ function Home() {
 		}
 	}
 
+	// const handleDetail = () => {
+	// 	if(!state.detail){
+	// 		return setDetail(!NavTop)
+	// 	} else {
+	// 		setBookmark(!NavbarUser)
+	// 	}
+	// }
+
 	
 
 	
@@ -45,7 +54,7 @@ function Home() {
 		<div>
 			<Container fluid style={{ padding: 0 }}>
 				{state.isLogin ? <NavbarUser /> : <HomeTitle />}
-
+				
 				<div className="mx-5 py-3">
 					<Col>
 						<h1>

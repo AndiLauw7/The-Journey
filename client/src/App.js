@@ -16,6 +16,7 @@ import AddJourney from "./components/pages/AddJourney";
 
 //import API
 import { API, setAuthToken } from "./configAPI/api";
+import ListItem from "./components/pages/list-item";
 
 if (localStorage.token) {
 	setAuthToken(localStorage.token);
@@ -76,6 +77,7 @@ function App() {
 				<Route exact path="/profile/:id" element={<Profile />} />
 				<Route exact path="/new-journey" element={<AddJourney />} />
 				<Route exact path="/bookmark" element={<Bookmark />} />
+				<Route exact path="list-items" element={<ListItem />} />
 			</Routes>
 		
 	);

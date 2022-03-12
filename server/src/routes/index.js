@@ -1,5 +1,6 @@
 const express = require('express')
 const { register, Login, checkAuth } = require('../controllers/auth')
+const { getProducts, getProduct, addProduct } = require('../controllers/journey')
 const { getProfiles, addProfile, getProfile, updateProfile } = require('../controllers/profile')
 const { getUsers, getUser, updateUser, addUsers, deleteUser } = require('../controllers/user')
 const { auth } = require('../middlewares/auth')
@@ -24,6 +25,10 @@ router.get('/profiles', getProfiles);
 router.get("/profile/:id", auth,  getProfile)
 router.post("/profile/:id", auth, addProfile)
 router.patch("/profile/:id",uploadFile("image"), auth, updateProfile)
+
+router.get('/journeys',auth, getProducts)
+router.get('/journey/:id',auth, getProduct)
+router.post('/add-journey', uploadFile("image"), auth, addProduct)
 
 
 

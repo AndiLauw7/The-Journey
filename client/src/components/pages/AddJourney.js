@@ -43,19 +43,19 @@ function AddJourney() {
 	const [preview, setPreview] = useState(null);
 
 	const [form, setForm] = useState({
-		title: "",
+		tittle: "",
 		image: "",
 	});
 
 	const [model, setModel] = useState({
-		content: "",
+		description: "",
 	});
-	console.log(model.content);
+	console.log(model.description);
 
 	const handleModel = (model) => {
 		setModel({
 			...model,
-			content: model,
+			description: model,
 		});
 	};
 
@@ -83,12 +83,12 @@ function AddJourney() {
 			};
 
 			const formData = new FormData();
-			formData.set("idUser", state.user.id);
-			formData.set("title", form.title);
+			formData.set("iduser", state.user.id);
+			formData.set("title", form.tittle);
 			formData.set("image", form.image[0], form.image[0].name);
-			formData.set("desc", model.content);
+			formData.set("description", model.content);
 
-			const response = await API.post("/journey", formData, config);
+			const response = await API.post("/add-journey", formData, config);
 			console.log(response);
 			if (response.status === 200) {
 				alert("Post Masuk Pa eKO");
@@ -140,7 +140,7 @@ function AddJourney() {
 
 							<FroalaEditor
 								tag="textarea"
-								model={model.content}
+								model={model.description}
 								onModelChange={handleModel}
 							/>
 
@@ -153,7 +153,7 @@ function AddJourney() {
 							</Button>
 						</Form>
 						<p>RENDER EDITOR</p>
-						<FroalaEditorView model={model.content} />
+						<FroalaEditorView model={model.description} />
 					</Stack>
 				</Container>
 			</Container>
