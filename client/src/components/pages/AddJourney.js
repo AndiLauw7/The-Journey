@@ -43,11 +43,12 @@ function AddJourney() {
 	const [preview, setPreview] = useState(null);
 
 	const [form, setForm] = useState({
-		tittle: "",
+		
 		image: "",
 	});
 
 	const [model, setModel] = useState({
+		tittle: "",
 		description: "",
 	});
 	console.log(model.description);
@@ -56,6 +57,7 @@ function AddJourney() {
 		setModel({
 			...model,
 			description: model,
+			tittle:model,
 		});
 	};
 
@@ -84,9 +86,9 @@ function AddJourney() {
 
 			const formData = new FormData();
 			formData.set("iduser", state.user.id);
-			formData.set("title", form.tittle);
+			formData.set("tittle", model.tittle);
 			formData.set("image", form.image[0], form.image[0].name);
-			formData.set("description", model.content);
+			formData.set("description", model.description);
 
 			const response = await API.post("/add-journey", formData, config);
 			console.log(response);
@@ -113,9 +115,9 @@ function AddJourney() {
 							<Form.Control
 								className=" p-2 mb-4 "
 								type="text"
-								name="title"
-								onChange={handleChange}
-								// id="inputTitle"
+								name="tittle"
+								model={model.tittle}
+								onModelChange={handleModel}
 							/>
 							<div className="mb-5 text-center">
 								<img

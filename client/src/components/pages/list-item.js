@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Container,Row,Col,Stack } from "react-bootstrap"
 import NavbarUser from "../navbars/NavbarUser"
 import { API } from "../../configAPI/api"
-
+import { Card } from "react-bootstrap"
 
 
 
@@ -46,8 +46,9 @@ export default function  ListItem()  {
                 <img src={item.image}alt="image" />
                                     
                  <p>
-                                       
-               {item.description}
+                 <Card.Text 
+                         className="post__description" 
+                         dangerouslySetInnerHTML={{ __html: item.description}}  />                 
                 </p>
                 <p>
                 {item.description}
