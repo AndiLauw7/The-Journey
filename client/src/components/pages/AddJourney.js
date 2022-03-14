@@ -37,130 +37,132 @@ import { API } from "../../configAPI/api";
 import { useNavigate } from "react-router-dom";
 
 function AddJourney() {
-	const navigate = useNavigate();
-	const [state, dispatch] = useContext(UserContext);
+  const navigate = useNavigate();
+  const [state, dispatch] = useContext(UserContext);
 
-	const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState(null);
 
-	const [form, setForm] = useState({
-		
-		image: "",
-	});
+  const [form, setForm] = useState({
+    image: "",
+  });
 
-	const [model, setModel] = useState({
-		tittle: "",
-		description: "",
-	});
-	console.log(model.description);
+  const [model, setModel] = useState({
+    tittle: "",
+    description: "",
+  });
+  console.log(model);
 
-	const handleModel = (model) => {
-		setModel({
-			...model,
-			description: model,
-			tittle:model,
-		});
-	};
+  const handleModel = (e) => {
+    setModel({
+      ...model,
+      description: e,
+    });
+  };
 
-	const handleChange = (e) => {
-		setForm({
-			...form,
-			[e.target.name]:
-				e.target.type === "file" ? e.target.files : e.target.value,
-		});
+  const handletittle = (e) => {
+    setModel({
+      ...model,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-		if (e.target.type === "file") {
-			let url = URL.createObjectURL(e.target.files[0]);
-			setPreview(url);
-		}
-	};
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]:
+        e.target.type === "file" ? e.target.files : e.target.value,
+    });
 
-	const handleSubmit = async (e) => {
-		try {
-			e.preventDefault();
+    if (e.target.type === "file") {
+      let url = URL.createObjectURL(e.target.files[0]);
+      setPreview(url);
+    }
+  };
 
-			const config = {
-				headers: {
-					"Content-type": "multipart/form-data",
-				},
-			};
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
 
-			const formData = new FormData();
-			formData.set("iduser", state.user.id);
-			formData.set("tittle", model.tittle);
-			formData.set("image", form.image[0], form.image[0].name);
-			formData.set("description", model.description);
+      const config = {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      };
 
-			const response = await API.post("/add-journey", formData, config);
-			console.log(response);
-			if (response.status === 200) {
-				alert("Post Masuk Pa eKO");
-				navigate("/list-items");
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
-	return (
-		<>
-			<NavbarUser />
-			<Container fluid className="px-5">
-				<h1 className="my-5">
-					<dt>New Journey</dt>
-				</h1>
+      const formData = new FormData();
+      formData.set("iduser", state.user.id);
+      formData.set("tittle", model.tittle);
+      formData.set("image", form.image[0], form.image[0].name);
+      formData.set("description", model.description);
 
-				<Container>
-					<Stack>
-						<Form method="post">
-							<Form.Label className="h5 fw-bold">Title</Form.Label>
-							<Form.Control
-								className=" p-2 mb-4 "
-								type="text"
-								name="tittle"
-								model={model.tittle}
-								onModelChange={handleModel}
-							/>
-							<div className="mb-5 text-center">
-								<img
-									src={preview === null ? "" : preview}
-									style={{
-										Width: "800px",
-										maxHeight: "300px",
-										objectFit: "cover",
-									}}
-								/>
-							</div>
-							<Form.Label className="h5 fw-bold">Cover Image</Form.Label>
-							<Form.Control
-								className=" p-2 mb-4 "
-								type="file"
-								name="image"
-								onChange={handleChange}
-								// id="inputTitle"
-							/>
+      const response = await API.post("/add-journey", formData, config);
+      console.log(response);
+      if (response.status === 200) {
+        alert("Post Masuk Pa eKO");
+        navigate("/list-items");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return (
+    <>
+      <NavbarUser />
+      <Container fluid className="px-5">
+        <h1 className="my-5">
+          <dt>New Journey</dt>
+        </h1>
 
-							{/* <div id="isEditor"></div> */}
+        <Container>
+          <Stack>
+            <Form method="post">
+              <Form.Label className="h5 fw-bold">Title</Form.Label>
+              <Form.Control
+                className=" p-2 mb-4 "
+                type="text"
+                name="tittle"
+                model={model.tittle}
+                onChange={handletittle}
+              />
+              <div className="mb-5 text-center">
+                <img
+                  src={preview === null ? "" : preview}
+                  style={{
+                    Width: "800px",
+                    maxHeight: "300px",
+                    objectFit: "cover",
+                  }}
+                />
+              </div>
+              <Form.Label className="h5 fw-bold">Cover Image</Form.Label>
+              <Form.Control
+                className=" p-2 mb-4 "
+                type="file"
+                name="image"
+                onChange={handleChange}
+              />
 
-							<FroalaEditor
-								tag="textarea"
-								model={model.description}
-								onModelChange={handleModel}
-							/>
+              <FroalaEditor
+                tag="textarea"
+                model={model.description}
+                onModelChange={handleModel}
+              />
 
-							<Button
-								className="p-2  mt-3 px-5 float-end"
-								variant="primary"
-								onClick={handleSubmit}
-							>
-								Post
-							</Button>
-						</Form>
-						<p>RENDER EDITOR</p>
-						<FroalaEditorView model={model.description} />
-					</Stack>
-				</Container>
-			</Container>
-		</>
-	);
+              <Button
+                className="p-2  mt-3 px-5 float-end"
+                variant="primary"
+                onClick={handleSubmit}
+              >
+                Post
+              </Button>
+            </Form>
+            <p>RENDER EDITOR</p>
+            <FroalaEditorView model={model.description} />
+          </Stack>
+        </Container>
+      </Container>
+    </>
+  );
 }
 
 export default AddJourney;

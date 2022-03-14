@@ -11,6 +11,7 @@
     "crypto-browserify": "^3.12.0",
     "font-awesome": "^4.7.0",
     "froala-editor": "^4.0.9",
+    "fuse.js": "^6.5.3",
     "nodemon": "^2.0.15",
     "react": "^17.0.2",
     "react-bootstrap": "^2.2.0",
