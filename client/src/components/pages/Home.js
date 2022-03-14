@@ -2,7 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../context/userContext";
 import { API } from "../../configAPI/api";
-import Fuse from "fuse.js";
+// import Fuse from "fuse.js";
+import cardpost from "../element/CardPost";
 import {
   Col,
   Row,
@@ -19,6 +20,7 @@ import HomeTitle from "./HomeTitle";
 import ModalLogin from "../Modals/ModalLogin";
 import NavTop from "../navbars/NavTop";
 import DetailJourney from "./DetailJourney";
+import CardPost from "../element/CardPost";
 
 function Home() {
   const navigate = useNavigate();
@@ -30,10 +32,14 @@ function Home() {
   const [detail, setDetail] = useState(false);
   const [search, setSearch] = useState("");
 
-  const handleBookmark = () => {
+  const handleBookmark = async (id) => {
+    console.log(id);
     if (!state.isLogin) {
       return setModalLogin(!modalLogin);
     } else {
+      const response = await API.post("/journeys");
+      // Store product data to useState variabel
+      setJourneys(response.data.data);
       setBookmark(!bookmark);
     }
   };
@@ -95,57 +101,12 @@ function Home() {
               .map((item, index) => {
                 return (
                   <>
-                    <Col sm={12} md={6} lg={3}>
-                      <Card className="mt-5" style={{ width: "18rem" }}>
-                        <>
-                          <div
-                            style={{
-                              width: "30px",
-                              height: "30px",
-                              position: "absolute",
-                              backgroundColor: "#fff",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              borderRadius: "50px",
-                              top: "10px",
-                              right: "10px",
-                              cursor: "pointer",
-                            }}
-                            className="btn"
-                            onClick={handleBookmark}
-                          >
-                            {" "}
-                            {bookmark ? (
-                              <img src="assets/bookmark.svg" alt="bokmark" />
-                            ) : (
-                              <img
-                                src="assets/bookmark-active.svg"
-                                alt="bokmark-active"
-                              />
-                            )}
-                          </div>
-
-                          <Card.Img
-                            variant="top"
-                            src={item.image}
-                            style={{ height: "10rem" }}
-                          />
-                        </>
-
-                        <Card.Body onClick={handleDetail}>
-                          <Card.Title>{item.tittle} </Card.Title>
-                          <Card.Text>29 July 2020, {item.id}</Card.Text>
-                          <Card.Text>
-                            <Card.Text
-                              className="post__description"
-                              dangerouslySetInnerHTML={{
-                                __html: item.description,
-                              }}
-                            />
-                          </Card.Text>
-                        </Card.Body>
-                      </Card>
+                    <Col sm={12} md={6} lg={3} key={index}>
+                      <CardPost
+                        item={item}
+                        bookmark={bookmark}
+                        handleBookmark={(id) => handleBookmark(id)}
+                      />
                     </Col>
                   </>
                 );

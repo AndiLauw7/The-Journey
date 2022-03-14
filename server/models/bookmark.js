@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class bookmark extends Model {
     /**
@@ -25,11 +23,15 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  bookmark.init({
-    status: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'bookmark',
-  });
+  bookmark.init(
+    {
+      iduser: DataTypes.INTEGER,
+      idjourney: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "bookmark",
+    }
+  );
   return bookmark;
 };
